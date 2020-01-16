@@ -1,7 +1,9 @@
 const http = require('http'); //default node js pacakge
+const app = require('./app');
 
-const server = http.createServer((req, res) => {
-    res.end('this is my first response');
-});
+const port = process.env.PORT || 8080;
 
-server.listen(process.env.PORT || 8080);
+app.set('port', port);
+const server = http.createServer(app);
+
+server.listen(port);
