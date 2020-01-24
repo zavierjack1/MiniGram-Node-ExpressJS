@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
-
 const Post = require('../models/post');
 
 router.get('',(req, res, next) => {
-    console.log(req.params.id);
     Post.find()
         .then(documents => {
                 res.status(200).json({
@@ -30,8 +28,6 @@ router.get('/:id',(req, res, next) => {
 });
 
 router.delete('/:id',(req, res, next) => {
-    console.log(req.params.id);
-
     Post.deleteOne({ _id: req.params.id }, function (err) {})
         .then(result => {
             res.status(200).json({
@@ -57,7 +53,6 @@ router.post("", (req, res, next) => {
 })
 
 router.put('/:id', (req, res, next) =>{
-    console.log(req.params.id);
     Post.updateOne(
             { _id: req.params.id }, 
             new Post({ 
@@ -67,7 +62,6 @@ router.put('/:id', (req, res, next) =>{
             })
         )
         .then(result => {
-            console.log(result);
             res.status(200).json({
                 message: "Post updated successfully"
             });

@@ -3,9 +3,10 @@ const bodyParser = require('body-parser');
 const app = express();
 const mongoose = require('mongoose');
 const postRoutes = require('./routes/posts');
+require('dotenv').config({path: __dirname + '/.env'})
 
-//mongoose.connect('mongodb://mongoadmin:secret@my_mongo:27017/test?retryWrites=true')
-mongoose.connect('mongodb://meanuser:meanuser@my_mongo:27017/mean_course', {useNewUrlParser: true})
+const mongoUrl = process.env['mongoUrl'];
+mongoose.connect('mongodb://meanuser:meanuser@'+mongoUrl+'/mean_course', {useNewUrlParser: true})
     .then(()=>{
         console.log('Connected to the DB');
     })
@@ -29,6 +30,5 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/posts', postRoutes);
-
 
 module.exports = app;

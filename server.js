@@ -46,6 +46,8 @@ const onListening = () => {
 const port = normalizePort(process.env.PORT || "8080");
 app.set("port", port);
 
+console.log(process.env['mongoUrl']||'variable not set');
+console.log(process.env['TEST']||'variable not set');
 const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
