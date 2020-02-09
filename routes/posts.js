@@ -36,14 +36,28 @@ function getImagePath(filename) {
  ****************************/
 
 router.get('',(req, res, next) => {
-    Post.find()
+    //param querys
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const postQuery = Post.find();
+    let fetchedPost;
+    if (pageSize && currentPage){
+        postQuery.
+            skip(pageSize*(currentPage-1)).
+            limit(pageSize);
+    }
+    postQuery
         .then(documents => {
-                res.status(200).json({
-                    message: 'Post fetched successfully',
-                    posts: documents
-                });
-            }
-        );
+            fetchedPost = documents
+            return Post.countDocuments();
+        })
+        .then(count => {
+            res.status(200).json({
+                message: 'Post fetched successfully',
+                posts: fetchedPost,
+                postCount: count
+            });
+        });
 });
 
 router.get('/:id',(req, res, next) => {
