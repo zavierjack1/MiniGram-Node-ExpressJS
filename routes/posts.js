@@ -95,6 +95,7 @@ router.post("",
     checkAuth, //dont execute function with () simply pass function
     multer({storage: storage}).single("image"), 
     (req, res, next) => {
+        console.log("authentication passed");
         const url = req.protocol + "://" + req.get("host");
         const post = new Post(
             {
