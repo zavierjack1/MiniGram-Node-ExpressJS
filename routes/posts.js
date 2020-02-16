@@ -101,8 +101,10 @@ router.post("",
             {
                 title: req.body.title,
                 content: req.body.content,
-                imagePath: url + getImagePath(req.file.filename)
-            });
+                imagePath: url + getImagePath(req.file.filename),
+                createdBy: req.userData.userId
+            }
+        );
         post.save().then(createdPost =>{
             res.status(201).json({
                 message: "Post added successfully",

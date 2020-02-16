@@ -51,7 +51,7 @@ router.post("/login", (req, res, next) => {
                 })
             }
 
-            const tokenDuration = 3600;
+            const tokenDuration = 3600; //seconds
             const token = jwt.sign(
                 {
                     email: fetchedUser.email,

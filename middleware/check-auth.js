@@ -4,7 +4,8 @@ module.exports = (req, res, next) => {
     try{
         //expecting "Bearer this_is_my_token1231254245234234234"
         const token = req.headers.authorization.split(" ")[1];
-        jwt.verify(token, "secret_this_should_be_longer");
+        const decodedToken = jwt.verify(token, "secret_this_should_be_longer");
+        req.userData = { email: decodedToken.email, userId: decodedToken.userId};
         next();
     }
     catch{
