@@ -63,7 +63,8 @@ router.post("/login", (req, res, next) => {
             res.status(200).json(
                 {
                     token: token,
-                    expiresIn: tokenDuration
+                    expiresIn: tokenDuration,
+                    userId: fetchedUser._id //userId is part of token but decoding would affect performance
                 }
             )
         })

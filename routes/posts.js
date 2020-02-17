@@ -82,7 +82,6 @@ router.delete(
     '/:id',
     checkAuth, 
     (req, res, next) => {
-        console.log(req.userData.userId);
         Post.deleteOne(
             {
                  _id: req.params.id,
@@ -146,7 +145,8 @@ router.put('/:id',
             _id: req.body.id, 
             title: req.body.title,
             content: req.body.content, 
-            imagePath: imagePath
+            imagePath: imagePath, 
+            createdBy: req.userData.userId
         });
         Post.updateOne(
                 { 
