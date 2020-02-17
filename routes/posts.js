@@ -76,26 +76,37 @@ router.get('/:id',(req, res, next) => {
         });
 });
 
-//protected 
+//protected - logged in users only
+//only user who created should be able to delete
 router.delete(
     '/:id',
     checkAuth, 
     (req, res, next) => {
-        Post.deleteOne({ _id: req.params.id }, function (err) {})
+        console.log(req.userData.userId);
+        Post.deleteOne(
+            {
+                 _id: req.params.id,
+                 createdBy: req.userData.userId //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor)
+            })
             .then(result => {
-                res.status(200).json({
-                    message: "Post deleted successfully"
-                });
-            }
-        );
+                if (result.n > 0){
+                    res.status(200).json({
+                        message: "Post deleted successfully"
+                    });
+                }
+                else{
+                    res.status(401).json({
+                        message: "Not Authorized"
+                    });
+                }
+            });
 });
 
-//protected
+//protected - logged in users only
 router.post("", 
     checkAuth, //dont execute function with () simply pass function
     multer({storage: storage}).single("image"), 
     (req, res, next) => {
-        console.log("authentication passed");
         const url = req.protocol + "://" + req.get("host");
         const post = new Post(
             {
@@ -116,9 +127,10 @@ router.post("",
                 }
             });
         });
-})
+});
 
-//protected 
+//protected - logged in users only 
+//only user who created should be able to update
 router.put('/:id', 
     checkAuth, 
     multer({storage: storage}).single("image"), 
@@ -137,15 +149,24 @@ router.put('/:id',
             imagePath: imagePath
         });
         Post.updateOne(
-                { _id: req.params.id }, 
+                { 
+                    _id: req.params.id, 
+                    createdBy: req.userData.userId //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor)
+                }, 
                 post
             )
             .then(result => {
-                res.status(200).json({
-                    message: "Post updated successfully",
-                    post: post
-                });
+                if (result.nModified > 0){
+                    res.status(200).json({
+                        message: "Post updated successfully"
+                    });
+                }
+                else{
+                    res.status(401).json({
+                        message: "Not Authorized"
+                    });
+                }
             });
-})
+});
 
 module.exports = router;

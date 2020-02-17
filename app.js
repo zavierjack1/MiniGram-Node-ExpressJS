@@ -8,6 +8,7 @@ const userRoutes = require('./routes/user');
 require('dotenv').config({path: __dirname + '/.env'})
 
 const mongoUrl = process.env['mongoUrl'];
+mongoose.set('useCreateIndex', true);
 mongoose.connect('mongodb://meanuser:meanuser@'+mongoUrl+'/mean_course', {useNewUrlParser: true})
     .then(()=>{
         console.log('Connected to the DB');
