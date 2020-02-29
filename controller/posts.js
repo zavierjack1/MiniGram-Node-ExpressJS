@@ -24,7 +24,7 @@ exports.getPosts = ((req, res, next) => {
                     title: post.title,
                     content: post.content,
                     imagePath: post.imagePath,
-                    createdBy: post.createdBy, 
+                    createdBy: post.createdBy._id, 
                     createdByEmail: post.createdBy.email
                 };
             })
@@ -53,7 +53,7 @@ exports.getPostById = ((req, res, next) => {
                     title: post.title,
                     content: post.content,
                     imagePath: post.imagePath,
-                    createdBy: post.createdBy,
+                    createdBy: post.createdBy._id,
                     createdByEmail: post.createdBy.email
                 }
                 res.status(200).json(transformedPost);
