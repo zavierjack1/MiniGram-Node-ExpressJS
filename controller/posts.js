@@ -16,8 +16,18 @@ exports.getPosts = ((req, res, next) => {
             limit(pageSize);
     }
     postQuery
+        .populate("createdBy")
         .then(documents => {
-            fetchedPost = documents
+            fetchedPost = documents.map(post =>{
+                return {
+                    _id: post._id,
+                    title: post.title,
+                    content: post.content,
+                    imagePath: post.imagePath,
+                    createdBy: post.createdBy, 
+                    createdByEmail: post.createdBy.email
+                };
+            })
             return Post.countDocuments();
         })
         .then(count => {
@@ -35,10 +45,18 @@ exports.getPosts = ((req, res, next) => {
 });
 
 exports.getPostById = ((req, res, next) => {
-    Post.findById(req.params.id)
+    Post.findById(req.params.id).populate("createdBy")
         .then(post => {
             if(post){
-                res.status(200).json(post);
+                transformedPost = {
+                    id: post._id,
+                    title: post.title,
+                    content: post.content,
+                    imagePath: post.imagePath,
+                    createdBy: post.createdBy,
+                    createdByEmail: post.createdBy.email
+                }
+                res.status(200).json(transformedPost);
             }
             else{
                 res.status(404).json({
