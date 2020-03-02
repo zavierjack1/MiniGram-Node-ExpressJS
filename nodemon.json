@@ -1,0 +1,8 @@
+{
+    "env": {
+        "MONGO_URL": "my_mongo:27017",
+        "MONGO_USER": "meanuser",
+        "MONGO_PW": "meanuser",
+        "JWT_KEY": "secret_this_should_be_longer"
+    }
+}

@@ -146,7 +146,7 @@ exports.updatePostById = ((req, res, next) => {
             post
         )
         .then(result => {
-            if (result.nModified > 0){
+            if (result.n > 0){
                 res.status(200).json({
                     message: "Post updated successfully"
                 });

@@ -5,11 +5,13 @@ const app = express();
 const mongoose = require('mongoose');
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/user');
-require('dotenv').config({path: __dirname + '/.env'})
+ 
+const MONGO_URL = process.env.MONGO_URL; 
+const MONGO_USER = process.env.MONGO_USER;
+const MONGO_PW = process.env.MONGO_PW;
 
-const mongoUrl = process.env['mongoUrl'];
 mongoose.set('useCreateIndex', true);
-mongoose.connect('mongodb://meanuser:meanuser@'+mongoUrl+'/mean_course', {useNewUrlParser: true})
+mongoose.connect('mongodb://'+MONGO_USER+':'+MONGO_PW+'@'+MONGO_URL+'/mean_course', {useNewUrlParser: true})
     .then(()=>{
         console.log('Connected to the DB');
     })
