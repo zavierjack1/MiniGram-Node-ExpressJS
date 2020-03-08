@@ -1,3 +1,7 @@
 docker run -dit --network local_network --name my_express -p 8081:8080 -v $(pwd)/NodeJS-Express:/ExpressJS zavierjack1/express_js:latest
 
 npm run start:server
+
+#RUN npm install --save express
+#RUN npm install --save body-parser
+#RUN npm install --save mongoose

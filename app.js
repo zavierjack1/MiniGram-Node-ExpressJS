@@ -5,10 +5,10 @@ const app = express();
 const mongoose = require('mongoose');
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/user');
- 
-const MONGO_URL = process.env.MONGO_URL; 
-const MONGO_USER = process.env.MONGO_USER;
-const MONGO_PW = process.env.MONGO_PW;
+
+const MONGO_URL = process.env.MONGO_URL || process.env.DEFAULT_MONGO_URL; 
+const MONGO_USER = process.env.MONGO_USER || process.env.DEFAULT_MONGO_USER;
+const MONGO_PW = process.env.MONGO_PW || process.env.DEFAULT_MONGO_PW;
 
 mongoose.set('useCreateIndex', true);
 mongoose.connect('mongodb://'+MONGO_USER+':'+MONGO_PW+'@'+MONGO_URL+'/mean_course', {useNewUrlParser: true})

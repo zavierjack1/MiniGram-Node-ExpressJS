@@ -17,7 +17,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "node server.js",
-    "start:server": "nodemon server.js"
+    "start:dev": "nodemon server.js"
   },
   "repository": {
     "type": "git",

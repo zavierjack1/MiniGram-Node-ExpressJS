@@ -43,7 +43,7 @@ const onListening = () => {
     debug("Listening on " + bind);
 };
 
-const port = normalizePort(process.env.PORT || "8080");
+const port = normalizePort(process.env.PORT || process.env.DEFAULT_PORT);
 app.set("port", port);
 
 const server = http.createServer(app);

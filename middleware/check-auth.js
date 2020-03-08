@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-JWT_KEY = process.env.JWT_KEY;
+JWT_KEY = process.env.JWT_KEY || process.env.DEFAULT_JWT_KEY;
 
 module.exports = (req, res, next) => {
     try{
