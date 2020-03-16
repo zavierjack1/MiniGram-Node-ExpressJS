@@ -1,8 +1,6 @@
 docker run -dit --network local_network --name my_express -p 8081:8080 -v $(pwd)/NodeJS-Express:/NodeJS-Express zavierjack1/express_js:latest
 
 
-docker run -dit --network local_network --name my_express -p 8081:8080 zavierjack1/mean_course_express -c 
-
 
 
 npm run start:server

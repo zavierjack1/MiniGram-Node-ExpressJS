@@ -11,13 +11,21 @@ const MONGO_USER = process.env.MONGO_USER || process.env.DEFAULT_MONGO_USER;
 const MONGO_PW = process.env.MONGO_PW || process.env.DEFAULT_MONGO_PW;
 
 mongoose.set('useCreateIndex', true);
-mongoose.connect('mongodb://'+MONGO_USER+':'+MONGO_PW+'@'+MONGO_URL+'/mean_course', {useNewUrlParser: true})
-    .then(()=>{
-        console.log('Connected to the DB');
-    })
-    .catch(()=>{
-        console.log('Connection failed');
-    });
+
+var connectWithRetry = function() {
+    return mongoose.connect(
+        'mongodb://'+MONGO_USER+':'+MONGO_PW+'@'+MONGO_URL+'/mean_course', 
+        {useNewUrlParser: true}, 
+        function(err) {
+            if (err) {
+                console.error('Failed to connect to mongo on startup - retrying in 5 sec', err);
+                setTimeout(connectWithRetry, 5000);
+            }
+        }
+    );
+};
+connectWithRetry();
+console.log('Connected to mongo');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false})); //not used but nice-to-have
