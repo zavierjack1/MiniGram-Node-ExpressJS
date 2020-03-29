@@ -5,11 +5,13 @@ const app = express();
 const mongoose = require('mongoose');
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/user');
+require('dotenv').config();
 
-const MONGO_URL = process.env.MONGO_URL || process.env.DEFAULT_MONGO_URL; 
-const MONGO_USER = process.env.MONGO_USER || process.env.DEFAULT_MONGO_USER;
-const MONGO_PW = process.env.MONGO_PW || process.env.DEFAULT_MONGO_PW;
+const MONGO_URL = process.env.MONGO_URL; 
+const MONGO_USER = process.env.MONGO_USER;
+const MONGO_PW = process.env.MONGO_PW;
 
+console.log(MONGO_URL);
 mongoose.set('useCreateIndex', true);
 
 var connectWithRetry = function() {

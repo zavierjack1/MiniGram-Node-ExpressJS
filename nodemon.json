@@ -1,5 +1,5 @@
 {
-    "env": {
+    "nodemonEnv": {
         "DEFAULT_PORT": "8080",
         "DEFAULT_MONGO_URL": "my_mongo:27017",
         "DEFAULT_MONGO_USER": "meanuser",
