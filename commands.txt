@@ -1,7 +1,25 @@
 docker run -dit --network local_network --name my_express -p 8081:8080 -v $(pwd)/NodeJS-Express:/NodeJS-Express zavierjack1/express_js:latest
 
+depends_on: 
+      - my_mongo
+    image: zavierjack1/express:latest
+    ports:
+      - "8080:8080"
+    working_dir: /NodeJS-Express
+    volumes: 
+      - ../NodeJS-Express:/NodeJS-Express
+      - ./Node/.env:/NodeJS-Express/.env
 
+    
+-v $(pwd)/FullStack/Node/.env:/NodeJS-Express/.env \
 
+docker run -dit \
+--name my_express \
+-v $(pwd)/NodeJS-Express:/NodeJS-Express \
+-w /NodeJS-Express \
+-p 8080:8080 \
+zavierjack1/express:latest \
+npm run start
 
 npm run start:server
 

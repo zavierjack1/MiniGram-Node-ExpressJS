@@ -1,5 +1,7 @@
 FROM node
+COPY /NodeJS-Express /NodeJS-Express
+WORKDIR /NodeJS-Express
 RUN apt-get update
 RUN apt-get install vim -y
 RUN npm install
-CMD npm run start:dev
+CMD npm run start
