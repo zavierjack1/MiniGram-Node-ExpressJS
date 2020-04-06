@@ -1,5 +1,5 @@
 FROM node
-COPY /NodeJS-Express /NodeJS-Express
+COPY ./ /NodeJS-Express/
 WORKDIR /NodeJS-Express
 RUN apt-get update
 RUN apt-get install vim -y
