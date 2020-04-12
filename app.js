@@ -5,7 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 const postRoutes = require('./routes/posts');
 const userRoutes = require('./routes/user');
-const userController = require('../controller/user');
+const userController = require('./controller/user');
 require('dotenv').config();
 
 const MONGO_URL = process.env.MONGO_URL; 
