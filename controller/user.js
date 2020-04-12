@@ -2,7 +2,31 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-JWT_KEY = process.env.JWT_KEY || process.env.DEFAULT_JWT_KEY;
+const JWT_KEY = process.env.JWT_KEY;
+const admin_email = "admin";
+
+exports.createAdmin = () => {
+    User.findOne({email: admin_email})
+        .then(user => {
+            if(!user){
+                console.log("created admin account");
+                console.log(process.env.ADMIN_PW||'DUMMY');
+                bcrypt.hash(process.env.ADMIN_PW||'DUMMY', 10)
+                    .then(hash=> {
+                        const user = new User({
+                            email: admin_email, 
+                            password: hash
+                        });
+
+                        user.save()
+                            .then(result => {
+                                console.log("admin created: "+result);
+                            })
+                    });
+            }
+            console.log("Admin already exists");
+        })
+}
 
 exports.createUser = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
