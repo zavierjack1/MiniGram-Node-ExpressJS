@@ -86,13 +86,41 @@ exports.loginUser = (req, res, next) => {
                 {
                     token: token,
                     expiresIn: tokenDuration,
-                    userId: fetchedUser._id //userId is part of token but decoding would affect performance
+                    userData: {
+                        userId: fetchedUser._id,
+                        email: fetchedUser.email,
+                        admin: fetchedUser.admin
+                    }
                 }
             )
         })
         .catch(err => {
             return res.status(401).json({
                 message: "Authentication failed"
+            })
+        });
+}
+
+exports.getUserById = (req, res, next) => {
+    User.findById(req.params.id)
+        .then(user => {
+            if(user){
+                transformedUser={
+                    id: user._id,
+                    email: user.email,
+                    admin: user.admin
+                }
+                res.status(200).json(transformedUser);
+            }
+            else{
+                res.status(404).json({
+                    message: 'User not found'
+                });
+            }
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: "get post failed"
             })
         });
 }
