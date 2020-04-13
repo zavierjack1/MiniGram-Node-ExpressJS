@@ -10,14 +10,13 @@ exports.createAdmin = () => {
     User.findOne({email: admin_email})
         .then(user => {
             if(!user){
-                console.log("creating admin account");
-                console.log(admin_email);
-                //console.log(admin_pw);
+                console.log("creating admin account: "+admin_email);
                 bcrypt.hash(admin_pw, 10)
                     .then(hash=> {
                         const user = new User({
                             email: admin_email, 
-                            password: hash
+                            password: hash, 
+                            admin: true
                         });
 
                         user.save()
