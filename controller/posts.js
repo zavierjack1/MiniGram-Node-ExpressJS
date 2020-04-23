@@ -1,5 +1,5 @@
 const Post = require('../models/post');
-
+const User = require('../models/user');
 function getImagePath(filename) {
     return "/images/" + filename;
 }
@@ -72,25 +72,66 @@ exports.getPostById = ((req, res, next) => {
 });
 
 exports.deletePostById = ((req, res, next) => {
-    Post.deleteOne({
-            _id: req.params.id,
-            createdBy: req.userData.userId //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor)
-        })
-        .then(result => {
-            if (result.n > 0){
-                res.status(200).json({
-                    message: "Post deleted successfully"
-                });
-            }
+    User.findById(req.userData.userId)
+        .then(user => {
+            if(user){
+                if (user.admin) {
+                    Post.deleteOne({
+                        _id: req.params.id,
+                    })
+                    .then(result => {
+                        if (result.n > 0){
+                            res.status(200).json({
+                                message: "Post deleted successfully"
+                            });
+                        }
+                        else{
+                            res.status(401).json({
+                                message: "Not Authorized"
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        res.status(500).json({
+                            message: "deleting post failed"
+                        })
+                    });
+                }
+                else{
+                    Post.deleteOne({
+                        _id: req.params.id,
+                        createdBy: req.userData.userId //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor)
+                    })
+                    .then(result => {
+                        console.log(result);
+                        if (result.n > 0){
+                            res.status(200).json({
+                                message: "Post deleted successfully"
+                            });
+                        }
+                        else{
+                            res.status(401).json({
+                                message: "Not Authorized"
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        res.status(500).json({
+                            message: "deleting post failed"
+                        })
+                    });
+                }
+                
+            } 
             else{
-                res.status(401).json({
+                res.status(404).json({
                     message: "Not Authorized"
                 });
             }
         })
         .catch(error => {
             res.status(500).json({
-                message: "deleting post failed"
+                message: "Not Authorized"
             })
         });
 });
@@ -138,6 +179,7 @@ exports.updatePostById = ((req, res, next) => {
         imagePath: imagePath, 
         createdBy: req.userData.userId
     });
+
     Post.updateOne(
             { 
                 _id: req.params.id, 

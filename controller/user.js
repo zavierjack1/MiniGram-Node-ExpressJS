@@ -28,7 +28,7 @@ exports.createAdmin = () => {
             else{
                 console.log("Admin already exists");
             }
-        })
+        });
 }
 
 exports.createUser = (req, res, next) => {
@@ -111,7 +111,7 @@ exports.getUserById = (req, res, next) => {
                     admin: user.admin
                 }
                 res.status(200).json(transformedUser);
-            }
+            } 
             else{
                 res.status(404).json({
                     message: 'User not found'
