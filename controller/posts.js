@@ -72,68 +72,29 @@ exports.getPostById = ((req, res, next) => {
 });
 
 exports.deletePostById = ((req, res, next) => {
-    User.findById(req.userData.userId)
-        .then(user => {
-            if(user){
-                if (user.admin) {
-                    Post.deleteOne({
-                        _id: req.params.id,
-                    })
-                    .then(result => {
-                        if (result.n > 0){
-                            res.status(200).json({
-                                message: "Post deleted successfully"
-                            });
-                        }
-                        else{
-                            res.status(401).json({
-                                message: "Not Authorized"
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        res.status(500).json({
-                            message: "deleting post failed"
-                        })
-                    });
-                }
-                else{
-                    Post.deleteOne({
-                        _id: req.params.id,
-                        createdBy: req.userData.userId //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor)
-                    })
-                    .then(result => {
-                        console.log(result);
-                        if (result.n > 0){
-                            res.status(200).json({
-                                message: "Post deleted successfully"
-                            });
-                        }
-                        else{
-                            res.status(401).json({
-                                message: "Not Authorized"
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        res.status(500).json({
-                            message: "deleting post failed"
-                        })
-                    });
-                }
-                
-            } 
-            else{
-                res.status(404).json({
-                    message: "Not Authorized"
-                });
-            }
-        })
-        .catch(error => {
-            res.status(500).json({
+    Post.deleteOne({
+        _id: req.params.id,
+        $or: [{createdBy: req.userData.userId}, {$expr: {function() { return req.userData.admin }}}]
+    })
+    .then(result => {
+        if (result.n > 0){
+            res.status(200).json({
+                message: "Post deleted successfully"
+            });
+        }
+        else{
+            res.status(401).json({
                 message: "Not Authorized"
-            })
-        });
+            });
+        }
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: "deleting post failed"
+        })
+    });
+
+                
 });
 
 exports.createPost = ((req, res, next) => {
@@ -179,11 +140,11 @@ exports.updatePostById = ((req, res, next) => {
         imagePath: imagePath, 
         createdBy: req.userData.userId
     });
-
+    
     Post.updateOne(
             { 
-                _id: req.params.id, 
-                createdBy: req.userData.userId //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor)
+                _id: req.params.id,
+                $or: [{createdBy: req.userData.userId}, {$expr: {function() { return req.userData.admin }}}], //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor). or the user is admin
             }, 
             post
         )
