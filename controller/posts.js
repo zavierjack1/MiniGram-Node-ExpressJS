@@ -16,59 +16,61 @@ exports.getPosts = ((req, res, next) => {
             limit(pageSize);
     }
     postQuery
-        .populate("createdBy")
-        .then(documents => {
-            fetchedPost = documents.map(post =>{
-                return {
-                    _id: post._id,
-                    title: post.title,
-                    content: post.content,
-                    imagePath: post.imagePath,
-                    createdBy: post.createdBy._id, 
-                    createdByEmail: post.createdBy.email
-                };
-            })
-            return Post.countDocuments();
+    .populate("createdBy")
+    .then(documents => {
+        fetchedPost = documents.map(post =>{
+            return {
+                _id: post._id,
+                title: post.title,
+                content: post.content,
+                imagePath: post.imagePath,
+                createdBy: post.createdBy._id, 
+                createdByEmail: post.createdBy.email,
+                likedBy: post.likedBy
+            };
         })
-        .then(count => {
-            res.status(200).json({
-                message: 'Post fetched successfully',
-                posts: fetchedPost,
-                postCount: count
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: "get post failed"
-            })
+        return Post.countDocuments();
+    })
+    .then(count => {
+        res.status(200).json({
+            message: 'Post fetched successfully',
+            posts: fetchedPost,
+            postCount: count
         });
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: "get post failed"
+        })
+    });
 });
 
 exports.getPostById = ((req, res, next) => {
     Post.findById(req.params.id).populate("createdBy")
-        .then(post => {
-            if(post){
-                transformedPost = {
-                    id: post._id,
-                    title: post.title,
-                    content: post.content,
-                    imagePath: post.imagePath,
-                    createdBy: post.createdBy._id,
-                    createdByEmail: post.createdBy.email
-                }
-                res.status(200).json(transformedPost);
+    .then(post => {
+        if(post){
+            transformedPost = {
+                id: post._id,
+                title: post.title,
+                content: post.content,
+                imagePath: post.imagePath,
+                createdBy: post.createdBy._id,
+                createdByEmail: post.createdBy.email,
+                likedBy: post.likedBy
             }
-            else{
-                res.status(404).json({
-                    message: 'Post not found'
-                });
-            }
+            res.status(200).json(transformedPost);
+        }
+        else{
+            res.status(404).json({
+                message: 'Post not found'
+            });
+        }
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: "get post failed"
         })
-        .catch(error => {
-            res.status(500).json({
-                message: "get post failed"
-            })
-        });
+    });
 });
 
 exports.deletePostById = ((req, res, next) => {
@@ -92,9 +94,7 @@ exports.deletePostById = ((req, res, next) => {
         res.status(500).json({
             message: "deleting post failed"
         })
-    });
-
-                
+    });         
 });
 
 exports.createPost = ((req, res, next) => {
@@ -140,18 +140,50 @@ exports.updatePostById = ((req, res, next) => {
         imagePath: imagePath, 
         createdBy: req.userData.userId
     });
-    
+
     Post.updateOne(
+        { 
+            _id: req.params.id,
+            $or: [{createdBy: req.userData.userId}, {$expr: {function() { return req.userData.admin }}}], //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor). or the user is admin
+        }, 
+        post
+    )
+    .then(result => {
+        if (result.n > 0){
+            res.status(200).json({
+                message: "Post updated successfully"
+            });
+        }
+        else{
+            res.status(401).json({
+                message: "Not Authorized"
+            });
+        }
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: "Could not update post."
+        });
+    });
+})
+
+exports.likePost = ((req, res, next) => {
+
+    liked = req.body.liked;
+
+    if (liked){
+        Post.updateOne(
             { 
-                _id: req.params.id,
-                $or: [{createdBy: req.userData.userId}, {$expr: {function() { return req.userData.admin }}}], //check that the createBy in DB = userId passed in via request. (which is added in the auth-interceptor). or the user is admin
-            }, 
-            post
+                _id: req.params.id
+            },
+            {
+                $addToSet: {likedBy: req.userData.userId}
+            }
         )
         .then(result => {
             if (result.n > 0){
                 res.status(200).json({
-                    message: "Post updated successfully"
+                    message: "Post liked successfully"
                 });
             }
             else{
@@ -161,8 +193,39 @@ exports.updatePostById = ((req, res, next) => {
             }
         })
         .catch(error => {
+            console.log(error);
             res.status(500).json({
                 message: "Could not update post."
-            });
-        });
+            })
+        })
+    }
+    else{
+        Post.updateOne(
+            { 
+                _id: req.params.id
+            },
+            {
+                $pull: {likedBy: req.userData.userId}
+            }
+        )
+        .then(result => {
+            if (result.n > 0){
+                res.status(200).json({
+                    message: "Post unliked successfully"
+                });
+            }
+            else{
+                res.status(401).json({
+                    message: "Not Authorized"
+                });
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500).json({
+                message: "Could not update post."
+            })
+        })
+    }
 })
+

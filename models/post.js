@@ -4,7 +4,8 @@ const postSchema =  mongoose.Schema({
     title: { type: String, required: true },
     content: { type: String, default: '' },
     imagePath: { type: String, required: true },
-    createdBy: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" }
+    createdBy: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
+    likedBy: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}]
 });
 
 module.exports = mongoose.model('Post', postSchema);

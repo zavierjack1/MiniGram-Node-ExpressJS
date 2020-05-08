@@ -49,8 +49,18 @@ app.use((req, res, next) => {
     )
     next();
 });
-
+//print req
+/*
+app.use((req, res, next) => {
+    console.log("**********************************");
+    console.log("request printer: ");
+    console.log("**********************************");
+    console.log(req.url);
+    next();
+})
+*/
 app.use('/api/posts', postRoutes);
 app.use('/api/user', userRoutes);
+
 
 module.exports = app;

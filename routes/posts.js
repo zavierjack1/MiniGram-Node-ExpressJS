@@ -15,6 +15,8 @@ router.delete('/:id', checkAuth, postsController.deletePostById);
 router.post("", checkAuth, extractFile, postsController.createPost);
 
 //protected - logged in users only 
+router.put('/likePost/:id', checkAuth, extractFile, postsController.likePost);
 router.put('/:id', checkAuth, extractFile, postsController.updatePostById);
+
 
 module.exports = router;
